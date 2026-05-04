@@ -39,7 +39,9 @@ const CFG = {
 // ─────────────────────────────────────────────
 //  DATABASE
 // ─────────────────────────────────────────────
-const db = new Database(path.join(__dirname, 'data', 'viewings.db'));
+const dataDir = path.join(__dirname, 'data');
+if (!require('fs').existsSync(dataDir)) require('fs').mkdirSync(dataDir, { recursive: true });
+const db = new Database(path.join(dataDir, 'viewings.db'));
 db.pragma('journal_mode = WAL');
 
 db.exec(`
