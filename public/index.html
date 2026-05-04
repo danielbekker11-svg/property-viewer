@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f5f4f0">
+  <title>Request a Viewing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #f5f4f0;
+      --card:      #ffffff;
+      --ink:       #1a1a1a;
+      --soft:      #555555;
+      --muted:     #888888;
+      --line:      #e8e6df;
+      --line-soft: #f0ede6;
+      --accent:    #1a3a5c;
+      --accent-h:  #122840;
+      --green:     #1d6b48;
+      --green-bg:  #eaf5ef;
+      --red:       #c0392b;
+      --red-bg:    #fdf0ee;
+      --r:         10px;
+      --r-lg:      16px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── PAGE ── */
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 16px 60px;
+    }
+    .wrap { width: 100%; max-width: 520px; }
+
+    /* ── AGENCY HEADER ── */
+    .agency-bar {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .agency-name {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── PROPERTY CARD ── */
+    .property-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    }
+    .property-img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+      background: var(--line-soft);
+    }
+    .property-img-placeholder {
+      height: 160px;
+      background: linear-gradient(135deg, #e8e4d8 0%, #d4cfc0 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+    }
+    .property-body {
+      padding: 20px 22px 22px;
+    }
+    .property-price {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .property-title {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    .property-addr {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .property-desc {
+      font-size: 15px;
+      color: var(--soft);
+      line-height: 1.6;
+    }
+
+    /* ── FORM CARD ── */
+    .form-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--r-lg);
+      padding: 26px 22px 28px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    }
+    .form-title {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+    .form-subtitle {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+
+    /* ── FORM ELEMENTS ── */
+    .field { margin-bottom: 16px; }
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--soft);
+      margin-bottom: 7px;
+    }
+    .req { color: var(--red); margin-left: 2px; }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 16px;
+      font-family: inherit;
+      background: var(--card);
+      border: 1.5px solid var(--line);
+      border-radius: var(--r);
+      color: var(--ink);
+      -webkit-appearance: none;
+      appearance: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(26,58,92,.1);
+    }
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath fill='%23888' d='M6 7L0 0h12z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 44px;
+    }
+    textarea { min-height: 80px; resize: vertical; }
+
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* ── SUBMIT BUTTON ── */
+    .btn-submit {
+      width: 100%;
+      padding: 17px;
+      font-size: 17px;
+      font-weight: 600;
+      font-family: inherit;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--r);
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background .15s, transform .1s;
+      letter-spacing: -0.01em;
+    }
+    .btn-submit:hover:not(:disabled) {
+      background: var(--accent-h);
+      transform: translateY(-1px);
+    }
+    .btn-submit:disabled { opacity: .55; cursor: not-allowed; }
+
+    /* ── ERROR ── */
+    .error-box {
+      background: var(--red-bg);
+      color: var(--red);
+      padding: 12px 16px;
+      border-radius: var(--r);
+      font-size: 14px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    /* ── SUCCESS SCREEN ── */
+    .success-screen {
+      text-align: center;
+      padding: 12px 0;
+      display: none;
+    }
+    .success-icon {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: var(--green-bg);
+      color: var(--green);
+      font-size: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .success-screen h2 {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 26px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+    .success-screen p {
+      font-size: 16px;
+      color: var(--soft);
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+    .success-detail {
+      background: var(--bg);
+      border-radius: var(--r);
+      padding: 16px 18px;
+      margin: 20px 0;
+      text-align: left;
+    }
+    .success-detail .row {
+      display: flex;
+      justify-content: space-between;
+      padding: 7px 0;
+      font-size: 15px;
+      border-bottom: 1px solid var(--line);
+    }
+    .success-detail .row:last-child { border-bottom: none; }
+    .success-detail .row span { color: var(--muted); }
+    .success-detail .row strong { font-weight: 500; }
+
+    .btn-again {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 13px 28px;
+      background: var(--card);
+      border: 1.5px solid var(--line);
+      border-radius: var(--r);
+      font-size: 15px;
+      font-family: inherit;
+      cursor: pointer;
+      color: var(--ink);
+      font-weight: 500;
+      transition: background .15s;
+    }
+    .btn-again:hover { background: var(--line-soft); }
+
+    /* ── FOOTER ── */
+    .footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 420px) {
+      .row-2 { grid-template-columns: 1fr; }
+    }
+    @media (min-width: 600px) {
+      .page { padding: 48px 24px 72px; }
+      .property-img { height: 240px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+  <div class="wrap">
+
+    <!-- AGENCY NAME -->
+    <div class="agency-bar">
+      <div class="agency-name" id="agencyName">Loading…</div>
+    </div>
+
+    <!-- PROPERTY INFO -->
+    <div class="property-card" id="propertyCard">
+      <div id="propertyImgWrap"></div>
+      <div class="property-body">
+        <div class="property-price" id="propertyPrice"></div>
+        <h1 class="property-title" id="propertyTitle">Loading…</h1>
+        <div class="property-addr" id="propertyAddr"></div>
+        <p class="property-desc" id="propertyDesc"></p>
+      </div>
+    </div>
+
+    <!-- REQUEST FORM -->
+    <div class="form-card" id="formCard">
+      <h2 class="form-title">Request a viewing</h2>
+      <p class="form-subtitle">Fill in your details and we'll confirm your time.</p>
+
+      <div class="error-box" id="errorBox"></div>
+
+      <form id="requestForm" novalidate>
+        <div class="field">
+          <label for="buyer_name">Your full name <span class="req">*</span></label>
+          <input type="text" id="buyer_name" name="buyer_name" autocomplete="name" placeholder="Jane Smith" required>
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label for="buyer_phone">Phone number <span class="req">*</span></label>
+            <input type="tel" id="buyer_phone" name="buyer_phone" autocomplete="tel" placeholder="+27 00 000 0000" required>
+          </div>
+          <div class="field">
+            <label for="buyer_email">Email <span style="color:var(--muted);font-weight:400">(for confirmation)</span></label>
+            <input type="email" id="buyer_email" name="buyer_email" autocomplete="email" placeholder="jane@email.com">
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label for="date">Preferred date <span class="req">*</span></label>
+            <input type="date" id="date" name="date" required>
+          </div>
+          <div class="field">
+            <label for="time">Preferred time <span class="req">*</span></label>
+            <select id="time" name="time" required>
+              <option value="">Choose a time…</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="notes">Any questions or notes? <span style="color:var(--muted);font-weight:400">(optional)</span></label>
+          <textarea id="notes" name="notes" placeholder="e.g. I'm a cash buyer, or I'd like to see the garden"></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">Send Viewing Request →</button>
+      </form>
+
+      <!-- SUCCESS STATE -->
+      <div class="success-screen" id="successScreen">
+        <div class="success-icon">✓</div>
+        <h2>Request sent!</h2>
+        <p>The agent will review your request and confirm your viewing shortly.</p>
+        <div class="success-detail" id="successDetail"></div>
+        <p style="font-size:14px;color:var(--muted)">You'll receive a confirmation by email once the agent approves.</p>
+        <button class="btn-again" onclick="resetForm()">Request another time</button>
+      </div>
+    </div>
+
+    <div class="footer" id="footer"></div>
+  </div>
+</div>
+
+<script>
+  let CONFIG = {};
+
+  async function init() {
+    try {
+      const r = await fetch('/api/property');
+      CONFIG = await r.json();
+
+      document.title = `Request a Viewing — ${CONFIG.title}`;
+      document.getElementById('agencyName').textContent = CONFIG.agencyName;
+      document.getElementById('propertyTitle').textContent = CONFIG.title;
+
+      if (CONFIG.price) {
+        document.getElementById('propertyPrice').textContent = CONFIG.price;
+      }
+      if (CONFIG.address) {
+        document.getElementById('propertyAddr').textContent = '📍 ' + CONFIG.address;
+      }
+      if (CONFIG.description) {
+        document.getElementById('propertyDesc').textContent = CONFIG.description;
+      }
+
+      // Property image
+      const imgWrap = document.getElementById('propertyImgWrap');
+      if (CONFIG.image) {
+        imgWrap.innerHTML = `<img class="property-img" src="${esc(CONFIG.image)}" alt="${esc(CONFIG.title)}" onerror="this.parentElement.innerHTML='<div class=\\'property-img-placeholder\\'>🏡</div>'">`;
+      } else {
+        imgWrap.innerHTML = `<div class="property-img-placeholder">🏡</div>`;
+      }
+
+      // Time options
+      const sel = document.getElementById('time');
+      (CONFIG.viewingTimes || []).forEach(t => {
+        const o = document.createElement('option');
+        o.value = t.value;
+        o.textContent = t.label;
+        sel.appendChild(o);
+      });
+
+      // Date limits
+      const dateInput = document.getElementById('date');
+      const today = new Date();
+      const max = new Date(today.getTime() + (CONFIG.advanceDays || 30) * 86400000);
+      dateInput.min = today.toISOString().split('T')[0];
+      dateInput.max = max.toISOString().split('T')[0];
+
+      // Footer
+      const parts = [];
+      if (CONFIG.agencyPhone) parts.push(CONFIG.agencyPhone);
+      document.getElementById('footer').textContent = parts.join(' · ');
+
+    } catch (e) {
+      document.getElementById('agencyName').textContent = '';
+      showError('Could not load page. Please refresh.');
+    }
+  }
+
+  document.getElementById('requestForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    hideError();
+
+    const name  = document.getElementById('buyer_name').value.trim();
+    const phone = document.getElementById('buyer_phone').value.trim();
+    const email = document.getElementById('buyer_email').value.trim();
+    const date  = document.getElementById('date').value;
+    const time  = document.getElementById('time').value;
+    const notes = document.getElementById('notes').value.trim();
+
+    if (!name)  return showError('Please enter your full name.');
+    if (!phone) return showError('Please enter your phone number.');
+    if (!date)  return showError('Please choose a date.');
+    if (!time)  return showError('Please choose a time.');
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+
+    try {
+      const r = await fetch('/api/request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ buyer_name: name, buyer_phone: phone, buyer_email: email, date, time, notes }),
+      });
+      const data = await r.json();
+
+      if (!r.ok) {
+        showError(data.error || 'Something went wrong. Please try again.');
+        btn.disabled = false;
+        btn.textContent = 'Send Viewing Request →';
+        return;
+      }
+
+      // Show success
+      document.getElementById('requestForm').style.display = 'none';
+      document.getElementById('successScreen').style.display = 'block';
+
+      const timeLabel = document.getElementById('time').options[document.getElementById('time').selectedIndex].text;
+      const dateLabel = new Date(date + 'T00:00:00').toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+      document.getElementById('successDetail').innerHTML = `
+        <div class="row"><span>Property</span><strong>${esc(CONFIG.title)}</strong></div>
+        <div class="row"><span>Date</span><strong>${esc(dateLabel)}</strong></div>
+        <div class="row"><span>Time</span><strong>${esc(timeLabel)}</strong></div>
+        ${email ? `<div class="row"><span>Confirmation to</span><strong>${esc(email)}</strong></div>` : ''}
+      `;
+
+    } catch (e) {
+      showError('Network error. Please check your connection and try again.');
+      btn.disabled = false;
+      btn.textContent = 'Send Viewing Request →';
+    }
+  });
+
+  function resetForm() {
+    document.getElementById('requestForm').reset();
+    document.getElementById('requestForm').style.display = 'block';
+    document.getElementById('successScreen').style.display = 'none';
+    document.getElementById('submitBtn').disabled = false;
+    document.getElementById('submitBtn').textContent = 'Send Viewing Request →';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function showError(msg) {
+    const b = document.getElementById('errorBox');
+    b.textContent = msg;
+    b.style.display = 'block';
+    b.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  function hideError() {
+    document.getElementById('errorBox').style.display = 'none';
+  }
+  function esc(s) {
+    return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  init();
+</script>
+</body>
+</html>

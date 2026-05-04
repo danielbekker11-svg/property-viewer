@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agent Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #f5f4f0;
+      --card:      #ffffff;
+      --ink:       #1a1a1a;
+      --soft:      #555555;
+      --muted:     #888888;
+      --line:      #e8e6df;
+      --line-soft: #f0ede6;
+      --accent:    #1a3a5c;
+      --accent-h:  #122840;
+      --green:     #1d6b48;
+      --green-bg:  #eaf5ef;
+      --green-btn: #1d6b48;
+      --green-h:   #155236;
+      --red:       #c0392b;
+      --red-bg:    #fdf0ee;
+      --red-btn:   #c0392b;
+      --red-h:     #992d22;
+      --amber:     #92400e;
+      --amber-bg:  #fef3c7;
+      --r:         10px;
+      --r-lg:      14px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── LOGIN ─── */
+    .login-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .login-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--r-lg);
+      padding: 36px 32px;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 4px 20px rgba(0,0,0,.07);
+    }
+    .login-card h1 {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 26px;
+      font-weight: 500;
+      letter-spacing: -.02em;
+      margin-bottom: 6px;
+    }
+    .login-card p { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+    .field { margin-bottom: 16px; }
+    label { display:block; font-size:14px; font-weight:500; color:var(--soft); margin-bottom:7px; }
+    input[type="password"], input[type="text"], input[type="tel"], input[type="email"], input[type="date"], select, textarea {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 16px;
+      font-family: inherit;
+      background: var(--card);
+      border: 1.5px solid var(--line);
+      border-radius: var(--r);
+      color: var(--ink);
+      -webkit-appearance: none;
+      appearance: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    input:focus, select:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(26,58,92,.1); }
+    .btn-primary {
+      width: 100%;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 600;
+      font-family: inherit;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--r);
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .btn-primary:hover { background: var(--accent-h); }
+    .login-error { background:var(--red-bg); color:var(--red); padding:10px 14px; border-radius:var(--r); font-size:14px; margin-bottom:16px; display:none; }
+
+    /* ─── SHELL ─── */
+    .shell { min-height: 100vh; display: none; flex-direction: column; }
+
+    /* ─── HEADER ─── */
+    .header {
+      background: var(--accent);
+      color: #fff;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .header-left h1 {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 20px;
+      font-weight: 500;
+      letter-spacing: -.01em;
+    }
+    .header-left p { font-size: 13px; opacity: .7; margin-top: 2px; }
+    .header-right { display:flex; gap:8px; }
+    .btn-ghost {
+      padding: 8px 16px;
+      background: rgba(255,255,255,.15);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: var(--r);
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,.25); }
+
+    /* ─── CONTENT ─── */
+    .content { max-width: 900px; margin: 0 auto; padding: 24px 16px 60px; width: 100%; }
+
+    /* ─── STATS ─── */
+    .stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:12px; margin-bottom:28px; }
+    .stat {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      padding: 16px 18px;
+    }
+    .stat-label { font-size: 12px; font-weight:500; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin-bottom:6px; }
+    .stat-value { font-family:'Fraunces',Georgia,serif; font-size:30px; font-weight:500; letter-spacing:-.02em; }
+    .stat.highlight .stat-value { color: var(--red); }
+
+    /* ─── SECTION ─── */
+    .section { margin-bottom: 32px; }
+    .section-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .section-head h2 {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 20px;
+      font-weight: 500;
+      letter-spacing: -.01em;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 26px;
+      height: 26px;
+      padding: 0 8px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .badge-amber { background:var(--amber-bg); color:var(--amber); }
+    .badge-green { background:var(--green-bg); color:var(--green); }
+    .badge-muted { background:var(--line-soft); color:var(--muted); }
+
+    /* ─── CARD LIST ─── */
+    .card-list { display:flex; flex-direction:column; gap:10px; }
+
+    .viewing-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--r-lg);
+      padding: 18px 18px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .viewing-card.is-pending { border-left: 4px solid #f59e0b; }
+    .viewing-card.is-confirmed { border-left: 4px solid var(--green); }
+    .viewing-card.is-declined { border-left: 4px solid var(--red); opacity:.65; }
+
+    .vc-top { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+    .vc-name { font-size:17px; font-weight:600; letter-spacing:-.01em; }
+    .vc-property { font-size:13px; color:var(--muted); margin-top:2px; }
+
+    .vc-time {
+      text-align: right;
+      white-space: nowrap;
+    }
+    .vc-date { font-size: 14px; font-weight: 600; color: var(--ink); }
+    .vc-clock { font-size: 14px; color: var(--muted); margin-top: 2px; }
+
+    .vc-contact { display:flex; flex-wrap:wrap; gap:12px; }
+    .vc-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 14px;
+      color: var(--soft);
+    }
+    .vc-chip a { color: var(--accent); text-decoration:none; font-weight:500; }
+    .vc-chip a:hover { text-decoration:underline; }
+
+    .vc-notes {
+      font-size:14px;
+      color:var(--soft);
+      font-style:italic;
+      background:var(--line-soft);
+      border-radius:6px;
+      padding:10px 12px;
+    }
+
+    /* ─── ACTION BUTTONS ─── */
+    .vc-actions { display:flex; gap:8px; }
+    .btn-confirm, .btn-decline, .btn-cancel {
+      flex: 1;
+      padding: 13px 12px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      border: none;
+      border-radius: var(--r);
+      cursor: pointer;
+      transition: background .15s, transform .1s;
+      letter-spacing: -.01em;
+    }
+    .btn-confirm {
+      background: var(--green-btn);
+      color: #fff;
+    }
+    .btn-confirm:hover { background: var(--green-h); transform:translateY(-1px); }
+    .btn-decline {
+      background: var(--red-bg);
+      color: var(--red-btn);
+      border: 1.5px solid #f5c0bb;
+    }
+    .btn-decline:hover { background: #faddd9; }
+    .btn-cancel {
+      background: var(--line-soft);
+      color: var(--soft);
+      border: 1.5px solid var(--line);
+      flex: 0 0 auto;
+      padding: 13px 16px;
+    }
+    .btn-cancel:hover { background: #e8e4d8; }
+
+    /* ─── STATUS TAGS ─── */
+    .status-tag {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .03em;
+      text-transform: uppercase;
+    }
+    .tag-confirmed { background:var(--green-bg); color:var(--green); }
+    .tag-declined  { background:var(--red-bg);   color:var(--red); }
+    .tag-cancelled { background:var(--line-soft); color:var(--muted); }
+
+    /* ─── EMPTY ─── */
+    .empty {
+      background: var(--card);
+      border: 1px dashed var(--line);
+      border-radius: var(--r-lg);
+      padding: 32px 20px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 15px;
+    }
+    .empty-icon { font-size: 32px; margin-bottom: 10px; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 520px) {
+      .vc-top { flex-direction:column; gap:4px; }
+      .vc-time { text-align:left; }
+      .vc-actions { flex-direction:column; }
+      .btn-cancel { flex:1; }
+      .header { flex-direction:column; align-items:flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════ LOGIN ═══════════════════ -->
+<div class="login-wrap" id="loginView">
+  <div class="login-card">
+    <h1>Agent Login</h1>
+    <p>Property viewing management dashboard</p>
+    <div class="login-error" id="loginError"></div>
+    <form id="loginForm">
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Enter your password" autofocus required>
+      </div>
+      <button type="submit" class="btn-primary">Sign In</button>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════════════════ DASHBOARD ═══════════════════ -->
+<div class="shell" id="shell">
+
+  <header class="header">
+    <div class="header-left">
+      <h1 id="dashTitle">Viewing Requests</h1>
+      <p id="dashSub">Property Management Dashboard</p>
+    </div>
+    <div class="header-right">
+      <button class="btn-ghost" onclick="exportCsv()">Export CSV</button>
+      <button class="btn-ghost" onclick="logout()">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- STATS ROW -->
+    <div class="stats" id="statsRow"></div>
+
+    <!-- PENDING SECTION -->
+    <div class="section" id="pendingSection">
+      <div class="section-head">
+        <h2>Pending Requests</h2>
+        <span class="badge badge-amber" id="pendingBadge">0</span>
+      </div>
+      <div class="card-list" id="pendingList">
+        <div class="empty"><div class="empty-icon">🎉</div>No pending requests right now.</div>
+      </div>
+    </div>
+
+    <!-- CONFIRMED SECTION -->
+    <div class="section" id="confirmedSection">
+      <div class="section-head">
+        <h2>Confirmed Viewings</h2>
+        <span class="badge badge-green" id="confirmedBadge">0</span>
+      </div>
+      <div class="card-list" id="confirmedList">
+        <div class="empty"><div class="empty-icon">📅</div>No confirmed viewings yet.</div>
+      </div>
+    </div>
+
+    <!-- DECLINED SECTION (collapsed by default) -->
+    <div class="section" id="declinedSection" style="display:none">
+      <div class="section-head">
+        <h2>Declined Requests</h2>
+        <span class="badge badge-muted" id="declinedBadge">0</span>
+      </div>
+      <div class="card-list" id="declinedList"></div>
+    </div>
+
+    <div style="text-align:center;margin-top:8px;">
+      <button onclick="toggleDeclined()" id="declinedToggleBtn"
+        style="background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;font-family:inherit;padding:8px 16px;">
+        Show declined requests ↓
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let TOKEN = localStorage.getItem('agentToken');
+  let DATA  = null;
+  let declinedVisible = false;
+
+  // ── LOGIN ──
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const pw  = document.getElementById('password').value;
+    const err = document.getElementById('loginError');
+    err.style.display = 'none';
+    try {
+      const r = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pw }),
+      });
+      if (!r.ok) {
+        err.textContent = 'Wrong password. Please try again.';
+        err.style.display = 'block';
+        return;
+      }
+      const d = await r.json();
+      TOKEN = d.token;
+      localStorage.setItem('agentToken', TOKEN);
+      showDash();
+    } catch {
+      err.textContent = 'Connection error. Please try again.';
+      err.style.display = 'block';
+    }
+  });
+
+  function logout() {
+    localStorage.removeItem('agentToken');
+    TOKEN = null;
+    location.reload();
+  }
+
+  function showDash() {
+    document.getElementById('loginView').style.display = 'none';
+    const shell = document.getElementById('shell');
+    shell.style.display = 'flex';
+    loadData();
+  }
+
+  // ── LOAD DATA ──
+  async function loadData() {
+    try {
+      const r = await fetch('/api/admin/viewings', { headers: { 'X-Admin-Token': TOKEN } });
+      if (r.status === 401) return logout();
+      DATA = await r.json();
+      render();
+    } catch {
+      // silent — keep showing old data
+    }
+  }
+
+  // ── RENDER ──
+  function render() {
+    if (!DATA) return;
+
+    // Stats
+    document.getElementById('statsRow').innerHTML = `
+      <div class="stat ${DATA.stats.pending > 0 ? 'highlight' : ''}">
+        <div class="stat-label">Awaiting Action</div>
+        <div class="stat-value">${DATA.stats.pending}</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Today</div>
+        <div class="stat-value">${DATA.stats.confirmedToday}</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">This Week</div>
+        <div class="stat-value">${DATA.stats.thisWeek}</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Total Confirmed</div>
+        <div class="stat-value">${DATA.stats.confirmedTotal}</div>
+      </div>
+    `;
+
+    // Badges
+    document.getElementById('pendingBadge').textContent   = DATA.pending.length;
+    document.getElementById('confirmedBadge').textContent = DATA.confirmed.length;
+    document.getElementById('declinedBadge').textContent  = DATA.declined.length;
+
+    // Pending
+    const pList = document.getElementById('pendingList');
+    if (DATA.pending.length === 0) {
+      pList.innerHTML = `<div class="empty"><div class="empty-icon">🎉</div>No pending requests right now.</div>`;
+    } else {
+      pList.innerHTML = DATA.pending.map(v => viewingCard(v, 'pending')).join('');
+    }
+
+    // Confirmed
+    const cList = document.getElementById('confirmedList');
+    if (DATA.confirmed.length === 0) {
+      cList.innerHTML = `<div class="empty"><div class="empty-icon">📅</div>No confirmed viewings yet.</div>`;
+    } else {
+      cList.innerHTML = DATA.confirmed.map(v => viewingCard(v, 'confirmed')).join('');
+    }
+
+    // Declined
+    const dList = document.getElementById('declinedList');
+    dList.innerHTML = DATA.declined.length
+      ? DATA.declined.map(v => viewingCard(v, 'declined')).join('')
+      : `<div class="empty"><div class="empty-icon">—</div>No declined requests.</div>`;
+
+    // Show/hide declined toggle
+    document.getElementById('declinedToggleBtn').style.display =
+      DATA.declined.length > 0 ? 'inline-block' : 'none';
+  }
+
+  function viewingCard(v, type) {
+    const notesHtml = v.notes
+      ? `<div class="vc-notes">💬 "${esc(v.notes)}"</div>`
+      : '';
+
+    const phoneHref = v.buyer_phone.replace(/\s/g, '');
+    const contactHtml = `
+      <div class="vc-contact">
+        <span class="vc-chip">📞 <a href="tel:${esc(phoneHref)}">${esc(v.buyer_phone)}</a></span>
+        ${v.buyer_email ? `<span class="vc-chip">✉️ <a href="mailto:${esc(v.buyer_email)}">${esc(v.buyer_email)}</a></span>` : ''}
+      </div>
+    `;
+
+    let actionsHtml = '';
+    if (type === 'pending') {
+      actionsHtml = `
+        <div class="vc-actions">
+          <button class="btn-confirm" onclick="confirmViewing('${v.id}')">✅ Confirm Viewing</button>
+          <button class="btn-decline" onclick="declineViewing('${v.id}')">❌ Decline</button>
+        </div>
+      `;
+    } else if (type === 'confirmed') {
+      actionsHtml = `
+        <div class="vc-actions">
+          <span class="status-tag tag-confirmed">✓ Confirmed</span>
+          <button class="btn-cancel" onclick="cancelViewing('${v.id}')" title="Cancel this viewing">Cancel</button>
+        </div>
+      `;
+    } else if (type === 'declined') {
+      actionsHtml = `<span class="status-tag tag-declined">✗ Declined</span>`;
+    }
+
+    return `
+      <div class="viewing-card is-${type}" id="card-${v.id}">
+        <div class="vc-top">
+          <div>
+            <div class="vc-name">${esc(v.buyer_name)}</div>
+            <div class="vc-property">🏡 ${esc(v.property_name || 'Property')}</div>
+          </div>
+          <div class="vc-time">
+            <div class="vc-date">${esc(v.dateFormatted)}</div>
+            <div class="vc-clock">⏰ ${esc(v.timeFormatted)}</div>
+          </div>
+        </div>
+        ${contactHtml}
+        ${notesHtml}
+        ${actionsHtml}
+      </div>
+    `;
+  }
+
+  // ── ACTIONS ──
+  async function confirmViewing(id) {
+    const card = document.getElementById('card-' + id);
+    if (!confirm('Confirm this viewing? An email will be sent to the buyer.')) return;
+    await doAction(`/api/admin/confirm/${id}`);
+  }
+
+  async function declineViewing(id) {
+    if (!confirm('Decline this request? The buyer will be notified by email.')) return;
+    await doAction(`/api/admin/decline/${id}`);
+  }
+
+  async function cancelViewing(id) {
+    if (!confirm('Cancel this confirmed viewing?')) return;
+    await doAction(`/api/admin/cancel/${id}`);
+  }
+
+  async function doAction(url) {
+    try {
+      const r = await fetch(url, {
+        method: 'POST',
+        headers: { 'X-Admin-Token': TOKEN },
+      });
+      if (r.status === 401) return logout();
+      if (!r.ok) {
+        const d = await r.json().catch(() => ({}));
+        alert(d.error || 'Something went wrong. Please try again.');
+        return;
+      }
+      await loadData(); // refresh everything
+    } catch {
+      alert('Connection error. Please try again.');
+    }
+  }
+
+  function toggleDeclined() {
+    declinedVisible = !declinedVisible;
+    document.getElementById('declinedSection').style.display = declinedVisible ? 'block' : 'none';
+    document.getElementById('declinedToggleBtn').textContent =
+      declinedVisible ? 'Hide declined requests ↑' : 'Show declined requests ↓';
+  }
+
+  function exportCsv() {
+    window.open(`/api/admin/export?token=${encodeURIComponent(TOKEN)}`, '_blank');
+  }
+
+  function esc(s) {
+    return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  // Auto-refresh every 30 seconds so agent sees new requests without refreshing
+  setInterval(() => { if (TOKEN) loadData(); }, 30000);
+
+  // Init
+  if (TOKEN) showDash();
+</script>
+</body>
+</html>
